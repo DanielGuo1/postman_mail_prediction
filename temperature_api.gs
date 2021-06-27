@@ -6,7 +6,7 @@ function onOpen() {
 }
 function getWeatherData() {
   
-  var response = UrlFetchApp.fetch("https://api.openweathermap.org/data/2.5/weather?q=Freudenstadt&units=metric&appid={your_api_key}");
+  var response = UrlFetchApp.fetch("https://api.openweathermap.org/data/2.5/weather?q=Berlin&units=metric&appid={your_api_key}");
   Logger.log(response.getContentText());
   
   var json = response.getContentText();
