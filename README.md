@@ -13,7 +13,7 @@
 </p>
 
 ## About The Project
-I was curious about whether the mail was delivered to me. Especially if you've been waiting for a specific letter. I knew roughly when the postman would deliver my post and I went to the mailbox about 3-5 times during that timeframe to check whether my letter was there. Since this is insanely inefficient, I installed a [vibration sensor](https://www.aqara.com/us/vibration_sensor.html) in the mailbox that automatically sends me a notification (to my phone) as soon as the mailbox is opened.
+I was curious about whether the mail was delivered to me. Especially if you've been waiting for a specific letter. I knew roughly when the postman would deliver my post and I went to the mailbox about 3-5 times during that timeframe to check whether my letter was there. Since this is insanely inefficient, I installed a [vibration sensor](https://amzn.to/3smQGsJ) in the mailbox that automatically sends me a notification (to my phone) as soon as the mailbox is opened.
 
 ## Gather Data
 This is how the whole project started. From now on, I could keep track of the exact time when the mail was delivered. With this timestamp and some other information (postman in charge that day, vehicle, weather) I wanted to see whether I find patterns in the data:
