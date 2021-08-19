@@ -1,36 +1,69 @@
 [![Python](https://img.shields.io/badge/Language-Python3.x-blue.svg?style=flat-square&logo=Python&logoColor=white)](https://www.python.org/) 
 [![Openweathermap](https://img.shields.io/badge/API-Openweathermap-green.svg?style=flat-square)](https://openweathermap.org/) 
 
+## What do I want to achieve?
+I started a new project about 2 months ago, trying to identify patterns in the delivery of my mail. For that, I record the time when the postman delivers my mail.
+The data includes the postman, vehicle, time, date, weather (temperature, wind, air pressure, etc.). With this data I try to recognize and predict patterns in the delivery, maybe?
 
-<h1 align="center">Postman Mail Prediction</h1>
-<p align="center">
-  <a> 
-    <img src="https://github.com/DanielGuo1/postman_mail_prediction/blob/main/images/postman.jpeg" alt="Logo" width="400" height="380" >
-  </a>
-  <p align="center">
-    Predict the time when your mail arrives
-  </p>
-</p>
+![excel](https://user-images.githubusercontent.com/59144947/130101634-6f723c4c-28aa-4b7a-bad4-800eaf69e9b5.png)
 
-## About The Project
-I was curious about whether the mail was delivered to me. Especially if you've been waiting for a specific letter. I knew roughly when the postman would deliver my post and I went to the mailbox about 3-5 times during that timeframe to check whether my letter was there. Since this is insanely inefficient, I installed a [vibration sensor](https://amzn.to/3smQGsJ) in the mailbox that automatically sends me a notification (to my phone) as soon as the mailbox is opened.
+Examples:
+* If it rains on a Monday, my mail won’t arrive before 12 noon?
+* Whenever vehicle XY has been used, the mail never arrives before 2 p.m.
+* Postman X always takes the longest.
 
-## Gather Data
-This is how the whole project started. From now on, I could keep track of the exact time when the mail was delivered. With this timestamp and some other information (postman in charge that day, vehicle, weather) I wanted to see whether I find patterns in the data:
-* e.g. On Monday mail is delivered really quick
-* Postman A is always faster than Postman B
-* Whats the average time mail is delivered to me
-* If postman A drives Vehicle C on a rainy day, chances are high, that I won't get mail before X o'clock
 
-Problem with that is, that the small vibration sensor can't gather this kind of information for me. Therefore I started to look out of the window, everytime I got a notification, so that I can see whose delivering post today and which car he/she uses. I got the information about the weather via [openweathermap](https://openweathermap.org/).
+In the beginning I sat in front of the window, around noon to look for the postman. As soon as he showed up, I wrote down the time, the vehicle and the postman.
 
-Because I wasn't always at home to gather the data, I thought about a better solution. I installed a WiFi Cam at the frontdoor and used an object detection to automatically determine the postman and car. Disclaimer - filming is allowed on your own property. I will not publish the names, faces or any other information about the postmen.
+This was time consuming and I never knew whether the postman was already there (and I had missed him) or whether he would still come.
 
-All the data was stored in a google sheet. If you want to use the script to retrieve the weather data and automatically fill it in your google sheets. Create an API KEY from [openweathermap](https://openweathermap.org/) and use the `temperature_API.gs`.
+### Automate boring stuff
+Since this is insanely inefficient, I installed a vibration sensor in my mailbox that automatically sends a notification (to my phone) as soon as the mailbox is opened.
 
-TODO:
-- Picture of the vibration sensor
-- EDA on the data
-- compare diffrent models to predict time 
+With this solution, I no longer had to stick to my window and could relax and wait for the message on my cell phone.
+But there are also various problems here:
+* What happens if I don’t get any mail at all?
+* How do I track the postman and the vehicle? (I don’t see them anymore)
 
+In order to capture the vehicle and the postman, I ran to the window every time I received a push notification.
+
+That made my life a little easier, but there has to be something better?
+
+### (Further) automate boring stuff
+So I bought a CCTV camera* and installed it in front of my door.
+
+Every time I receive a notification, I look into the CCTV camera app to see who is at the door.
+Therefore I don’t have to be at home to collect the data. That works pretty good, but I still have no information on days when I don’t get any mail.
+
+### Let’s go!
+My plan was to train a model that automatically recognizes the postman’s car. So I can review the footage to see when he crossed my house.
+However, in order to be able to recognize the postman’s car, I need training data.
+
+#### My first Model
+I used the YOLOv5 framework because it works quickly and easily. For my first model, I took screenshots of the postman’s car. The postman only has two different cars so far. A white van and a yellow electric car.
+
+* Electric car
+* White van
+
+I used (approx. 30 different) pictures to train my model on two classes (white van and electric car). I used makesense.ai to label the data.
+
+##### Parameters
+* img: 640 
+* batchsize: 64 (thats the biggest possible number I could use. I trained all models local on my machine. I tried it on Google Colab multiple times, but most of the time, it crashed and I had to start over)
+* epochs: 80 (I later found out, that the Yolo Documentation suggest 300 epochs at first)
+
+#### Model Version 2
+This time, I added more data to the model. Because the amount of pictures of the postcar is limited and fairly small. I created a new class with “other cars”. If the model doesn’t know how a postcar looks like, I can teach it how it doesn’t look like. Therefore I took around 500 pictures of “other cars” of my footage and labeled them as “others”. And added a lot of external pictures to have even more data to train.
+
+##### Parameters
+* img: 640 (same as above)
+* batchsize: 64 (same as above)
+* epochs: 300 
+
+I also:
+* reduce the epoch Size (150, 80, 50, 20 and 10)
+* reduced “other cars” pictures from 500 to 200 to 100 and eventually 0
+* removed pictures of external postcars
+* removed pictures of postcars that are almost similar or where you barely see the car
+to further improve my model.
 
